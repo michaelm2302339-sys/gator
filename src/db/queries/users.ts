@@ -12,8 +12,13 @@ async function getUserByName(name: string) {
   return result;
 }
 
+async function getUsers() {
+  const result = await db.select().from(users);
+  return result;
+}
+
 async function dangerouslyDeleteAllUser() {
   await db.delete(users);
 }
 
-export { createUser, getUserByName, dangerouslyDeleteAllUser };
+export { createUser, getUserByName, getUsers, dangerouslyDeleteAllUser };

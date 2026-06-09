@@ -1,7 +1,8 @@
-import { setUser } from "./config.js";
+import { setUser, readConfig } from "./config.js";
 import {
   createUser,
   getUserByName,
+  getUsers,
   dangerouslyDeleteAllUser,
 } from "./db/queries/users.js";
 
@@ -37,7 +38,7 @@ async function handlerRegister(
   try {
     const user = await createUser(regUserName);
     setUser(user.name);
-    console.log(`Welcome To Gator, ${user.name}`);
+    console.log(`Welcome To Gator, ${user.name} 🎉`);
     console.log(user);
   } catch (error: any) {
     if (error.cause.code === "23505") {
@@ -48,8 +49,23 @@ async function handlerRegister(
   }
 }
 
-async function handlerReset(cmdName: string) {
-  await dangerouslyDeleteAllUser();
+async function handlerGetUsers(_: string) {
+  const users = await getUsers();
+  const loggedInUserName = readConfig().currentUserName;
+
+  users.forEach((user) => {
+    const name = user.name;
+    if (name === loggedInUserName) {
+      console.log(`* ${name} (current)`);
+    } else {
+      console.log(`* ${name}`);
+    }
+  });
 }
 
-export { handlerLogin, handlerRegister, handlerReset };
+async function handlerReset(_: string) {
+  await dangerouslyDeleteAllUser();
+  console.log("☠️  You've successfully reseted the database ☠️");
+}
+
+export { handlerLogin, handlerRegister, handlerReset, handlerGetUsers };
