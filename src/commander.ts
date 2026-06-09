@@ -1,6 +1,4 @@
-import { handlerLogin } from "./handlers";
-
-type CommandHandler = (cmdName: string, ...args: string[]) => void;
+type CommandHandler = (cmdName: string, ...args: string[]) => Promise<void>;
 type CommandRegistry = Record<string, CommandHandler>;
 
 function registerCommand(
@@ -11,14 +9,14 @@ function registerCommand(
   registry[cmdName] = handler;
 }
 
-function runCommand(
+async function runCommand(
   registry: CommandRegistry,
   cmdName: string,
   ...args: string[]
 ) {
   const handler = registry[cmdName];
-  handler(cmdName, ...args);
+  await handler(cmdName, ...args);
 }
 
 export type { CommandHandler, CommandRegistry };
-export { registerCommand, runCommand, handlerLogin };
+export { registerCommand, runCommand };

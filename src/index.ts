@@ -1,10 +1,12 @@
 import type { CommandRegistry } from "./commander.js";
-import { handlerLogin, registerCommand, runCommand } from "./commander.js";
+import { registerCommand, runCommand } from "./commander.js";
+import { handlerLogin, handlerRegister } from "./handlers.js";
 
 const commandRegister: CommandRegistry = {};
 registerCommand(commandRegister, "login", handlerLogin);
+registerCommand(commandRegister, "register", handlerRegister);
 
-function main() {
+async function main() {
   const args = process.argv.slice(2);
   if (args.length < 1) {
     console.log("ERROR: gator requires atleast 1 positional argument");
@@ -12,15 +14,17 @@ function main() {
   }
   const [commandName, ...arr] = args;
   try {
-    runCommand(commandRegister, commandName, ...arr);
+    await runCommand(commandRegister, commandName, ...arr);
   } catch (error) {
     if (error instanceof Error) {
       console.log(error.message);
-      process.exit(1);
     } else {
       console.log("unknown error", error);
     }
+    process.exit(1);
   }
+
+  process.exit(0);
 }
 
-main();
+await main();
