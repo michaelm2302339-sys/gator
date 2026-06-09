@@ -1,5 +1,9 @@
 import { setUser } from "./config.js";
-import { createUser, getUserByName } from "./db/queries/users.js";
+import {
+  createUser,
+  getUserByName,
+  dangerouslyDeleteAllUser,
+} from "./db/queries/users.js";
 
 async function handlerLogin(cmdName: string, ...args: string[]): Promise<void> {
   if (args.length != 1) {
@@ -44,4 +48,8 @@ async function handlerRegister(
   }
 }
 
-export { handlerLogin, handlerRegister };
+async function handlerReset(cmdName: string) {
+  await dangerouslyDeleteAllUser();
+}
+
+export { handlerLogin, handlerRegister, handlerReset };

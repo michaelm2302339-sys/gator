@@ -12,4 +12,8 @@ async function getUserByName(name: string) {
   return result;
 }
 
-export { createUser, getUserByName };
+async function dangerouslyDeleteAllUser() {
+  await db.delete(users);
+}
+
+export { createUser, getUserByName, dangerouslyDeleteAllUser };

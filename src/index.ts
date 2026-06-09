@@ -1,10 +1,11 @@
 import type { CommandRegistry } from "./commander.js";
 import { registerCommand, runCommand } from "./commander.js";
-import { handlerLogin, handlerRegister } from "./handlers.js";
+import { handlerLogin, handlerRegister, handlerReset } from "./handlers.js";
 
 const commandRegister: CommandRegistry = {};
 registerCommand(commandRegister, "login", handlerLogin);
 registerCommand(commandRegister, "register", handlerRegister);
+registerCommand(commandRegister, "reset", handlerReset);
 
 async function main() {
   const args = process.argv.slice(2);
