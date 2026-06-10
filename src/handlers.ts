@@ -5,7 +5,9 @@ import {
   getUsers,
   dangerouslyDeleteAllUser,
 } from "./db/queries/users.js";
+import type { FeedSelect, UserSelect } from "./db/schema.js";
 
+import { createFeed } from "./db/queries/feeds.js";
 import { fetchFeed } from "./rss.js";
 
 async function handlerLogin(cmdName: string, ...args: string[]): Promise<void> {
@@ -75,10 +77,33 @@ async function handlerAgg(_: string) {
   console.log(JSON.stringify(feed, null, 2));
 }
 
+async function handlerAddFeed(cmdName: string, ...args: string[]) {
+  const currentUserName = readConfig().currentUserName;
+  if (args.length != 2) {
+    throw new Error(
+      `${cmdName} handler expects a 2 args but got ${args.length}\nExpects name and url`,
+    );
+  }
+  const userFromDB = await getUserByName(currentUserName);
+  const result = await createFeed({
+    userId: userFromDB.id,
+    name: args[0],
+    url: args[1],
+  });
+
+  printFeed(result, userFromDB);
+}
+
+function printFeed(feed: FeedSelect, user: UserSelect) {
+  console.table(user);
+  console.table(feed);
+}
+
 export {
   handlerLogin,
   handlerRegister,
   handlerReset,
   handlerGetUsers,
   handlerAgg,
+  handlerAddFeed,
 };
