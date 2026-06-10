@@ -27,7 +27,9 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
+    "axios": "^1.17.0",
     "drizzle-orm": "^0.45.2",
+    "fast-xml-parser": "^5.8.0",
     "postgres": "^3.4.9"
   }
 }

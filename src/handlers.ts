@@ -6,6 +6,8 @@ import {
   dangerouslyDeleteAllUser,
 } from "./db/queries/users.js";
 
+import { fetchFeed } from "./rss.js";
+
 async function handlerLogin(cmdName: string, ...args: string[]): Promise<void> {
   if (args.length != 1) {
     throw new Error(
@@ -68,4 +70,15 @@ async function handlerReset(_: string) {
   console.log("☠️  You've successfully reseted the database ☠️");
 }
 
-export { handlerLogin, handlerRegister, handlerReset, handlerGetUsers };
+async function handlerAgg(_: string) {
+  const feed = await fetchFeed("https://www.wagslane.dev/index.xml");
+  console.log(JSON.stringify(feed, null, 2));
+}
+
+export {
+  handlerLogin,
+  handlerRegister,
+  handlerReset,
+  handlerGetUsers,
+  handlerAgg,
+};
