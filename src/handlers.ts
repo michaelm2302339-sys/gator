@@ -43,7 +43,7 @@ async function handlerRegister(
     const user = await createUser(regUserName);
     setUser(user.name);
     console.log(`Welcome To Gator, ${user.name} 🎉`);
-    console.log(user);
+    console.table(user);
   } catch (error: any) {
     if (error.cause.code === "23505") {
       throw new Error("Username already exists");
