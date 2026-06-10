@@ -7,7 +7,7 @@ import {
 } from "./db/queries/users.js";
 import type { FeedSelect, UserSelect } from "./db/schema.js";
 
-import { createFeed } from "./db/queries/feeds.js";
+import { createFeed, getAllFeedAndPoster } from "./db/queries/feeds.js";
 import { fetchFeed } from "./rss.js";
 
 async function handlerLogin(cmdName: string, ...args: string[]): Promise<void> {
@@ -99,6 +99,11 @@ function printFeed(feed: FeedSelect, user: UserSelect) {
   console.table(feed);
 }
 
+async function handlerFeeds(_: string) {
+  const results = await getAllFeedAndPoster();
+  results.forEach((result) => console.table(result));
+}
+
 export {
   handlerLogin,
   handlerRegister,
@@ -106,4 +111,5 @@ export {
   handlerGetUsers,
   handlerAgg,
   handlerAddFeed,
+  handlerFeeds,
 };
