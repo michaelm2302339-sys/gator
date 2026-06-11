@@ -11,6 +11,7 @@ import {
   createFeedFollow,
   getFeedByURL,
   getFeedFollowsForUser,
+  deleteFeedFollow,
 } from "./db/queries/feeds.js";
 
 import type { FeedSelect, UserSelect } from "./db/schema.js";
@@ -153,6 +154,26 @@ function printFollowing(
   console.table(feedDetail);
 }
 
+async function handlerUnfollow(
+  cmdName: string,
+  user: UserSelect,
+  ...args: string[]
+) {
+  if (args.length != 1) {
+    throw new Error(
+      `${cmdName} handler expects a single arg but got ${args.length}`,
+    );
+  }
+  const feed = await getFeedByURL(args[0]);
+  if (!feed) {
+    throw new Error("No feed with that url");
+  }
+
+  const deletedFeedFollow = await deleteFeedFollow(user.id, feed.id);
+  console.log("🗑️ 🗑️");
+  console.table(deletedFeedFollow);
+}
+
 export {
   handlerLogin,
   handlerRegister,
@@ -163,4 +184,5 @@ export {
   handlerFeeds,
   handlerFollow,
   handlerFollowing,
+  handlerUnfollow,
 };

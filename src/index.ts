@@ -14,6 +14,7 @@ import {
   handlerFeeds,
   handlerFollow,
   handlerFollowing,
+  handlerUnfollow,
 } from "./handlers.js";
 
 const commandRegister: CommandRegistry = {};
@@ -33,6 +34,11 @@ registerCommand(
   commandRegister,
   "following",
   middlewareLoggedInd(handlerFollowing),
+);
+registerCommand(
+  commandRegister,
+  "unfollow",
+  middlewareLoggedInd(handlerUnfollow),
 );
 
 async function main() {
