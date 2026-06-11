@@ -79,11 +79,6 @@ async function handlerReset(_: string) {
   console.log("☠️  You've successfully reseted the database ☠️");
 }
 
-async function handlerAgg(_: string) {
-  const feed = await fetchFeed("https://www.wagslane.dev/index.xml");
-  console.log(JSON.stringify(feed, null, 2));
-}
-
 async function handlerAddFeed(
   cmdName: string,
   user: UserSelect,
@@ -179,7 +174,6 @@ export {
   handlerRegister,
   handlerReset,
   handlerGetUsers,
-  handlerAgg,
   handlerAddFeed,
   handlerFeeds,
   handlerFollow,

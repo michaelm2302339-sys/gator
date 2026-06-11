@@ -9,13 +9,13 @@ import {
   handlerRegister,
   handlerReset,
   handlerGetUsers,
-  handlerAgg,
   handlerAddFeed,
   handlerFeeds,
   handlerFollow,
   handlerFollowing,
   handlerUnfollow,
 } from "./handlers.js";
+import { handlerAgg } from "./agg.js";
 
 const commandRegister: CommandRegistry = {};
 registerCommand(commandRegister, "login", handlerLogin);
