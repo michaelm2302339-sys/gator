@@ -13,7 +13,7 @@ import {
   getFeedFollowsForUser,
 } from "./db/queries/feeds.js";
 
-import { type FeedSelect, type UserSelect } from "./db/schema.js";
+import type { FeedSelect, UserSelect } from "./db/schema.js";
 import { fetchFeed } from "./rss.js";
 
 async function handlerLogin(cmdName: string, ...args: string[]): Promise<void> {
@@ -83,25 +83,22 @@ async function handlerAgg(_: string) {
   console.log(JSON.stringify(feed, null, 2));
 }
 
-async function handlerAddFeed(cmdName: string, ...args: string[]) {
-  const currentUserName = readConfig().currentUserName;
-  if (args.length != 2) {
-    throw new Error(
-      `${cmdName} handler expects a 2 args but got ${args.length}\nExpects name and url`,
-    );
-  }
-  const userFromDB = await getUserByName(currentUserName);
+async function handlerAddFeed(
+  cmdName: string,
+  user: UserSelect,
+  ...args: string[]
+) {
   const feed = await createFeed({
-    userId: userFromDB.id,
+    userId: user.id,
     name: args[0],
     url: args[1],
   });
   const feedFollows = await createFeedFollow({
-    userId: userFromDB.id,
+    userId: user.id,
     feedId: feed.id,
   });
 
-  printFeed(feed, userFromDB);
+  printFeed(feed, user);
 }
 
 function printFeed(feed: FeedSelect, user: UserSelect) {
@@ -114,7 +111,11 @@ async function handlerFeeds(_: string) {
   results.forEach((result) => console.table(result));
 }
 
-async function handlerFollow(cmdName: string, ...args: string[]) {
+async function handlerFollow(
+  cmdName: string,
+  user: UserSelect,
+  ...args: string[]
+) {
   if (args.length != 1) {
     throw new Error(
       `${cmdName} handler expects a single arg but got ${args.length}`,
@@ -127,13 +128,13 @@ async function handlerFollow(cmdName: string, ...args: string[]) {
       "No feed found for that url. RUN addfeed <url> to create the feed",
     );
   }
-  const { id: userId } = await getUserByName(readConfig().currentUserName);
+  const { id: userId } = user;
   const results = await createFeedFollow({ userId, feedId });
   console.table(results);
 }
 
-async function handlerFollowing(_: string) {
-  const { id, name } = await getUserByName(readConfig().currentUserName);
+async function handlerFollowing(_: string, user: UserSelect) {
+  const { id, name } = user;
   const results = await getFeedFollowsForUser(id);
   printFollowing(
     name,

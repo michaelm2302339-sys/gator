@@ -1,5 +1,9 @@
 import type { CommandRegistry } from "./commander.js";
-import { registerCommand, runCommand } from "./commander.js";
+import {
+  registerCommand,
+  runCommand,
+  middlewareLoggedInd,
+} from "./commander.js";
 import {
   handlerLogin,
   handlerRegister,
@@ -18,10 +22,18 @@ registerCommand(commandRegister, "register", handlerRegister);
 registerCommand(commandRegister, "reset", handlerReset);
 registerCommand(commandRegister, "users", handlerGetUsers);
 registerCommand(commandRegister, "agg", handlerAgg);
-registerCommand(commandRegister, "addfeed", handlerAddFeed);
+registerCommand(
+  commandRegister,
+  "addfeed",
+  middlewareLoggedInd(handlerAddFeed),
+);
 registerCommand(commandRegister, "feeds", handlerFeeds);
-registerCommand(commandRegister, "follow", handlerFollow);
-registerCommand(commandRegister, "following", handlerFollowing);
+registerCommand(commandRegister, "follow", middlewareLoggedInd(handlerFollow));
+registerCommand(
+  commandRegister,
+  "following",
+  middlewareLoggedInd(handlerFollowing),
+);
 
 async function main() {
   const args = process.argv.slice(2);
