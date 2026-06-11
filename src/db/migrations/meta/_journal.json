@@ -15,6 +15,13 @@
       "when": 1781079933892,
       "tag": "0001_fuzzy_kulan_gath",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781089050129,
+      "tag": "0002_fast_robbie_robertson",
+      "breakpoints": true
     }
   ]
 }

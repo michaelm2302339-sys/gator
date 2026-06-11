@@ -8,6 +8,8 @@ import {
   handlerAgg,
   handlerAddFeed,
   handlerFeeds,
+  handlerFollow,
+  handlerFollowing,
 } from "./handlers.js";
 
 const commandRegister: CommandRegistry = {};
@@ -18,6 +20,8 @@ registerCommand(commandRegister, "users", handlerGetUsers);
 registerCommand(commandRegister, "agg", handlerAgg);
 registerCommand(commandRegister, "addfeed", handlerAddFeed);
 registerCommand(commandRegister, "feeds", handlerFeeds);
+registerCommand(commandRegister, "follow", handlerFollow);
+registerCommand(commandRegister, "following", handlerFollowing);
 
 async function main() {
   const args = process.argv.slice(2);

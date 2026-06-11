@@ -5,9 +5,15 @@ import {
   getUsers,
   dangerouslyDeleteAllUser,
 } from "./db/queries/users.js";
-import type { FeedSelect, UserSelect } from "./db/schema.js";
+import {
+  createFeed,
+  getAllFeedAndPoster,
+  createFeedFollow,
+  getFeedByURL,
+  getFeedFollowsForUser,
+} from "./db/queries/feeds.js";
 
-import { createFeed, getAllFeedAndPoster } from "./db/queries/feeds.js";
+import { type FeedSelect, type UserSelect } from "./db/schema.js";
 import { fetchFeed } from "./rss.js";
 
 async function handlerLogin(cmdName: string, ...args: string[]): Promise<void> {
@@ -85,13 +91,17 @@ async function handlerAddFeed(cmdName: string, ...args: string[]) {
     );
   }
   const userFromDB = await getUserByName(currentUserName);
-  const result = await createFeed({
+  const feed = await createFeed({
     userId: userFromDB.id,
     name: args[0],
     url: args[1],
   });
+  const feedFollows = await createFeedFollow({
+    userId: userFromDB.id,
+    feedId: feed.id,
+  });
 
-  printFeed(result, userFromDB);
+  printFeed(feed, userFromDB);
 }
 
 function printFeed(feed: FeedSelect, user: UserSelect) {
@@ -104,6 +114,44 @@ async function handlerFeeds(_: string) {
   results.forEach((result) => console.table(result));
 }
 
+async function handlerFollow(cmdName: string, ...args: string[]) {
+  if (args.length != 1) {
+    throw new Error(
+      `${cmdName} handler expects a single arg but got ${args.length}`,
+    );
+  }
+
+  const { id: feedId } = await getFeedByURL(args[0]);
+  if (!feedId) {
+    throw new Error(
+      "No feed found for that url. RUN addfeed <url> to create the feed",
+    );
+  }
+  const { id: userId } = await getUserByName(readConfig().currentUserName);
+  const results = await createFeedFollow({ userId, feedId });
+  console.table(results);
+}
+
+async function handlerFollowing(_: string) {
+  const { id, name } = await getUserByName(readConfig().currentUserName);
+  const results = await getFeedFollowsForUser(id);
+  printFollowing(
+    name,
+    results.map((result) => ({
+      name: result.feeds.name,
+      url: result.feeds.url,
+    })),
+  );
+}
+
+function printFollowing(
+  userName: string,
+  feedDetail: { name: string; url: string }[],
+) {
+  console.log(`— ${userName} 🙃`);
+  console.table(feedDetail);
+}
+
 export {
   handlerLogin,
   handlerRegister,
@@ -112,4 +160,6 @@ export {
   handlerAgg,
   handlerAddFeed,
   handlerFeeds,
+  handlerFollow,
+  handlerFollowing,
 };
